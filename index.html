@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css">
+    <link href="{{ site.github.url }}/path/to/css.css" rel="stylesheet">
+    <title></title>
+<style>
+canvas {
+  border: 1px solid #d3d3d3;
+  /*background-color: lightblue;*/
+  background-image: url("https://newevolutiondesigns.com/images/freebies/galaxy-wallpaper-11.jpg");
+  font-size: 80px;
+}
+
+.instructions {
+  font-family: sans-serif;
+  font-size: 25px;
+  float: left;
+  color: white;
+}
+
+/*.button {
+  display: inline;
+  padding:15px 25px;
+  font-size: 24px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: : 0 9px #999;
+}
+
+.button: hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}*/
+
+/*.stopbutton {
+  display: inline;
+  padding:15px 25px;
+  font-size: 24px;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: : 0 9px #999;
+
+}
+
+.stopbutton: hover {background-color: #3e8e41}
+
+.stopbutton:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+
+}*/
+
+/*.GamePiece {
+  background-image: url("https://cdn.theconversation.com/files/102351/width237/image-20151118-14191-150xv80.jpg");
+  width: 20px
+  height: 20px;
+}*/
+
+
+
+</style>
+</head>
+  <body onload="startGame()">
+    <div class="GamePiece"></div>
+    <div class="Instructions">
+      <!-- <button class="button">Start</button>
+      <button class="stopbutton">Stop</button> -->
+      <!-- <embed src="Patakas World.mp3" width="140" height="40" autostart="false" loop="FALSE"></embed> -->
+
+    <p><u>Instructions</u></p>
+    <p>To Play: Move Emoji through the opening of the white obstacles. Once the emoji hits the obstacles, the game will stop.</p>
+    <p>Use arrows to move the emoji</p>
+    <p>Good Luck!</p>
+  </div>
+<script>
+
+var myGamePiece;
+var myObstacles = [];
+var myScore;
+
+
+
+function startGame() {
+  myGameArea.start();
+  myObstacle = new component(10, 200, "white", 300, 120);
+  myGamePiece = new component(20, 20, "http://www.pngmart.com/files/1/Sad-Emoji-PNG-Transparent-Image.png", 10, 120, "image");
+  myScore = new component("100px", "Consolas", "white", 280, 80, "text");
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 1550;
+        this.canvas.height = 1180;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        window.addEventListener('keydown', function (e) {
+            myGameArea.keys = (myGameArea.keys || []);
+            myGameArea.keys[e.keyCode] = (e.type == "keydown");
+        })
+        window.addEventListener('keyup', function (e) {
+            myGameArea.keys[e.keyCode] = (e.type == "keydown");
+        })
+    },
+    clear : function(){
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+      clearInterval(this.interval);
+    }
+}
+function everyinterval(n) {
+  if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+  return false;
+}
+
+function component(width, height, color, x, y, type) {
+  this.gamearea = myGameArea;
+  this.type = type;
+  if (type == "image") {
+    this.image = new Image();
+    this.image.src = color;
+  }
+  this.width = width;
+  this.height = height;
+  this.speedX = 0;
+  this.speedY = 0;
+  this.x = x;
+  this.y = y;
+  this.update = function(){
+    ctx = myGameArea.context;
+    if (type == "image") {
+      ctx.drawImage(this.image,
+        this.x,
+        this.y,
+        this.width, this.height);
+    } else {
+    if (this.type == "text") {
+      ctx.font = this.width + "" + this.height;
+      ctx.fillStyle = color;
+      ctx.fillText(this.text, this.x, this.y);
+    } else {
+    ctx.fillStyle = color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+ }
+}
+this.newPos = function() {
+  this.x += this.speedX;
+  this.y += this.speedY
+  }
+  this.crashWith = function(otherobj) {
+    var myleft = this.x;
+    var myright = this.x + (this.width);
+    var mytop = this.y;
+    var mybottom = this.y + (this.height);
+    var otherleft = otherobj.x;
+    var otherright = otherobj.x + (otherobj.width);
+    var othertop = otherobj.y;
+    var otherbottom = otherobj.y + (otherobj.height);
+    var crash = true;
+    if ((mybottom < othertop)||
+    (mytop > otherbottom) ||
+    (myright < otherleft) ||
+    (myleft > otherright)) {
+      crash = false;
+    }
+    return crash;
+   }
+}
+function updateGameArea() {
+  var x, y;
+  for (i = 0; i < myObstacles.length; i += 1) {
+    if (myGamePiece.crashWith(myObstacles[i])) {
+      myGameArea.stop();
+      myGameArea.stop();
+      return;
+    }
+  }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea == 1 || everyinterval(150)) {
+      x = myGameArea.canvas.width;
+      minHeight = 50;
+      maxHeight = 200;
+      height = Math.floor(Math.random()*(maxHeight-minHeight + 1)+ minHeight);
+      minGap = 80;
+      maxGap = 200;
+      gap = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+      // y = myGameArea.canvas.height - 200
+      myObstacles.push(new component(10, height, "white", x, 0));
+      myObstacles.push(new component(10, x - height - gap, "white", x, height + gap));
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+    myObstacles[i].x += -1;
+    myObstacles[i].update();
+  }
+    myScore.text = "SCORE:" + myGameArea.frameNo;
+    myScore.update();
+    myGamePiece.newPos();
+    myGamePiece.update();
+
+
+
+    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -1; }
+    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 1; }
+    if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = -1; }
+    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 1; }
+    // myGamePiece.newPos();
+    // myGamePiece.update();
+}
+
+
+
+
+
+
+</script>
+</body>
+</html>
